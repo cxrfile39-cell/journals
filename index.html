@@ -3,65 +3,223 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0f3d3e">
-<title>各科文獻週報｜整合入口</title>
+<meta name="theme-color" content="#14213d">
+<title>各科文獻週報</title>
 <style>
-:root{color-scheme:light dark;--bg:light-dark(#f5f7f7,#0c1414);--bar:light-dark(#0f3d3e,#0a2a2b);--ink:light-dark(#111,#e8eeee);--chip:rgba(255,255,255,.14);--on:#fff;--onink:#0f3d3e}
+:root{color-scheme:light dark;--bg:light-dark(#f4f1ea,#0f1524);--ink:light-dark(#14213d,#eef1f7);--sub:light-dark(#5a6275,#a7b0c4)}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%}
-body{background:var(--bg);color:var(--ink);font:15px/1.4 -apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;display:flex;flex-direction:column;height:100dvh;overflow:hidden}
-header{background:var(--bar);color:#fff;padding:max(8px,env(safe-area-inset-top)) 10px 8px;display:flex;align-items:center;gap:8px;flex:none}
-nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1;-webkit-overflow-scrolling:touch}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;overflow-x:hidden}
+button{font:inherit;cursor:pointer}
+
+/* ---------- 首頁 ---------- */
+#home{min-height:100dvh;padding:max(20px,env(safe-area-inset-top)) clamp(14px,4vw,40px) 32px;max-width:1100px;margin:auto}
+.hero{display:flex;align-items:center;gap:14px;margin:8px 0 22px}
+.hero .logo{width:56px;height:56px;flex:none}
+.hero h1{font-size:clamp(24px,6vw,36px);line-height:1.1}
+.hero p{color:var(--sub);font-size:14px;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media(min-width:760px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}}
+.card{position:relative;border:0;border-radius:24px;padding:16px 16px 18px;color:#fff;text-align:left;overflow:hidden;
+  background:linear-gradient(150deg,var(--c1),var(--c2));box-shadow:0 10px 24px -12px var(--c2);
+  aspect-ratio:1/1.08;display:flex;flex-direction:column;justify-content:flex-end;transition:transform .2s}
+.card:active{transform:scale(.97)}
+@media(hover:hover){.card:hover{transform:translateY(-4px)}}
+.card:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.card .blob{position:absolute;border-radius:50%;background:rgba(255,255,255,.16)}
+.card .b1{width:70%;aspect-ratio:1;right:-18%;top:-16%}
+.card .b2{width:34%;aspect-ratio:1;left:-10%;top:30%;background:rgba(255,255,255,.1)}
+.card svg.ill{position:absolute;top:8%;left:50%;width:62%;transform:translateX(-50%);filter:drop-shadow(0 6px 8px rgba(0,0,0,.18))}
+.card b{position:relative;font-size:clamp(20px,5vw,26px);line-height:1.1}
+.card small{position:relative;opacity:.9;font-size:13px;margin-top:2px}
+.foot{color:var(--sub);font-size:13px;text-align:center;margin-top:26px}
+.credit{margin-top:18px;display:flex;flex-direction:column;align-items:center;gap:10px;font-size:14px}
+.upd{display:flex;align-items:center;gap:6px;color:var(--sub)}
+.upd svg{width:16px;height:16px}
+.upd time{font-variant-numeric:tabular-nums;white-space:nowrap}
+.who{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 16px;border-radius:999px;
+  background:light-dark(#fff,#1a2236);box-shadow:0 4px 14px -8px rgba(20,33,61,.5)}
+.who b{background:linear-gradient(90deg,#f57c00,#d6336c,#6a1fb8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.who .x{color:var(--sub)}
+.who .ai{color:#d97757;font-weight:600}
+
+/* ---------- 閱讀模式 ---------- */
+#viewer{display:none;flex-direction:column;height:100dvh}
+body.reading{overflow:hidden}
+body.reading #home{display:none}
+body.reading #viewer{display:flex}
+#bar{flex:none;display:flex;align-items:center;gap:8px;padding:max(8px,env(safe-area-inset-top)) 10px 8px;
+  background:linear-gradient(120deg,var(--c1),var(--c2));transition:background .3s}
+.round{flex:none;width:42px;height:42px;border-radius:50%;border:0;display:grid;place-items:center;
+  background:rgba(255,255,255,.22);color:#fff;text-decoration:none}
+.round svg{width:22px;height:22px}
+nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1}
 nav::-webkit-scrollbar{display:none}
-nav button{flex:none;border:0;border-radius:999px;padding:9px 15px;min-height:40px;font:inherit;font-weight:600;background:var(--chip);color:#fff;cursor:pointer;white-space:nowrap}
-nav button[aria-selected=true]{background:var(--on);color:var(--onink)}
-nav button:focus-visible,header a:focus-visible{outline:2px solid #7fe0d0;outline-offset:2px}
-header a{flex:none;color:#fff;text-decoration:none;font-size:20px;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;background:var(--chip)}
-main{flex:1;position:relative}
-iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff;display:none}
+nav button{flex:none;display:flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:6px 13px 6px 6px;min-height:42px;
+  background:rgba(255,255,255,.18);color:#fff;font-weight:600;white-space:nowrap}
+nav button i{width:30px;height:30px;border-radius:50%;background:var(--c1);display:grid;place-items:center;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5)}
+nav button i svg{width:22px;height:22px}
+nav button[aria-selected=true]{background:#fff;color:var(--c2)}
+nav button:focus-visible,.round:focus-visible{outline:2px solid #fff;outline-offset:2px}
+main{flex:1;position:relative;background:#fff}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none}
 iframe.on{display:block}
+@media(prefers-reduced-motion:reduce){.card{transition:none}}
 </style>
 </head>
 <body>
-<header>
+
+<!-- SVG 圖示 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <defs>
+  <!-- 小兒科：寶寶 -->
+  <symbol id="i-peds" viewBox="0 0 100 100">
+   <circle cx="50" cy="54" r="34" fill="#ffe3c2"/>
+   <circle cx="18" cy="56" r="8" fill="#ffd2a3"/><circle cx="82" cy="56" r="8" fill="#ffd2a3"/>
+   <path d="M44 22c0-8 10-10 12-4-6-1-8 3-5 6" fill="none" stroke="#7a4a1d" stroke-width="4" stroke-linecap="round"/>
+   <circle cx="38" cy="52" r="4.5" fill="#3b2a1a"/><circle cx="62" cy="52" r="4.5" fill="#3b2a1a"/>
+   <circle cx="30" cy="64" r="6" fill="#ff9aa2" opacity=".7"/><circle cx="70" cy="64" r="6" fill="#ff9aa2" opacity=".7"/>
+   <ellipse cx="50" cy="72" rx="13" ry="7" fill="#4fc3f7"/><circle cx="50" cy="72" r="5" fill="#fff"/><circle cx="50" cy="81" r="3.5" fill="none" stroke="#4fc3f7" stroke-width="3"/>
+  </symbol>
+  <!-- 婦產科：孕婦與愛心 -->
+  <symbol id="i-obgyn" viewBox="0 0 100 100">
+   <circle cx="44" cy="20" r="11" fill="#ffe3c2"/>
+   <path d="M34 14c2-10 20-10 22 2-6-4-14-4-22-2z" fill="#6b2f4a"/>
+   <path d="M36 34h16c6 0 8 6 8 10 14 4 20 14 18 26-2 10-12 16-26 16H36z" fill="#fff"/>
+   <path d="M36 86v8h18v-8" fill="#fff"/>
+   <path d="M64 50c0-5 7-6 8-1 1-5 8-4 8 1 0 6-8 10-8 10s-8-4-8-10z" fill="#ff3d7f"/>
+   <circle cx="58" cy="68" r="9" fill="#ffd6e4"/><circle cx="56" cy="65" r="3.5" fill="#ffb3cb"/>
+  </symbol>
+  <!-- 急診：救護車 + 心電圖 -->
+  <symbol id="i-er" viewBox="0 0 100 100">
+   <rect x="8" y="34" width="56" height="38" rx="6" fill="#fff"/>
+   <path d="M64 44h14l12 14v14H64z" fill="#fff"/><path d="M68 48h9l8 10H68z" fill="#9ad7ff"/>
+   <rect x="28" y="40" width="10" height="26" rx="2" fill="#e63946"/><rect x="20" y="48" width="26" height="10" rx="2" fill="#e63946"/>
+   <rect x="20" y="26" width="16" height="8" rx="3" fill="#ffd23f"/>
+   <circle cx="26" cy="76" r="9" fill="#2b2d42"/><circle cx="26" cy="76" r="4" fill="#ccc"/>
+   <circle cx="74" cy="76" r="9" fill="#2b2d42"/><circle cx="74" cy="76" r="4" fill="#ccc"/>
+   <path d="M4 14h22l5-9 7 18 5-9h18" fill="none" stroke="#ffd23f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <!-- 放射：胸部 X 光 -->
+  <symbol id="i-rad" viewBox="0 0 100 100">
+   <rect x="10" y="8" width="80" height="84" rx="8" fill="#0b1b3a"/>
+   <rect x="16" y="14" width="68" height="72" rx="4" fill="#13294f"/>
+   <rect x="47" y="18" width="6" height="64" rx="3" fill="#dfe9ff"/>
+   <g fill="none" stroke="#dfe9ff" stroke-width="3.5" stroke-linecap="round">
+    <path d="M47 30c-12-2-20 2-24 8M47 40c-13-2-22 2-26 9M47 50c-13-2-22 3-25 10M47 60c-12-1-20 3-22 10"/>
+    <path d="M53 30c12-2 20 2 24 8M53 40c13-2 22 2 26 9M53 50c13-2 22 3 25 10M53 60c12-1 20 3 22 10"/>
+   </g>
+   <ellipse cx="57" cy="62" rx="9" ry="8" fill="#7fb0ff" opacity=".55"/>
+  </symbol>
+  <!-- 血腫：血滴 + 細胞 -->
+  <symbol id="i-hemonc" viewBox="0 0 100 100">
+   <path d="M46 6C34 26 18 42 18 60a28 28 0 0 0 56 0C74 42 58 26 46 6z" fill="#e5383b"/>
+   <path d="M32 58a14 14 0 0 0 10 18" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+   <ellipse cx="78" cy="30" rx="14" ry="11" fill="#ff6b6b"/><ellipse cx="78" cy="30" rx="6" ry="4.5" fill="#c9184a"/>
+   <circle cx="80" cy="70" r="13" fill="#f3e8ff"/><circle cx="77" cy="68" r="6" fill="#9d4edd"/><circle cx="84" cy="74" r="3.5" fill="#c77dff"/>
+  </symbol>
+  <!-- 麻醉：面罩 + 監視器 -->
+  <symbol id="i-anes" viewBox="0 0 100 100">
+   <rect x="46" y="8" width="48" height="36" rx="5" fill="#0b2e2b"/>
+   <path d="M50 30h10l4-10 6 18 4-8h16" fill="none" stroke="#5cf2c8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+   <circle cx="88" cy="16" r="3" fill="#ffd23f"/>
+   <path d="M24 46c10-6 22-6 32 0l-4 26c-6 8-18 8-24 0z" fill="#e8fffb" stroke="#fff" stroke-width="3"/>
+   <ellipse cx="40" cy="60" rx="8" ry="6" fill="#bff3ea"/>
+   <path d="M40 74c0 10 4 16 14 18s20-4 24-14" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+   <path d="M40 74c0 10 4 16 14 18s20-4 24-14" fill="none" stroke="#9ce8dc" stroke-width="3" stroke-linecap="round" stroke-dasharray="3 4"/>
+  </symbol>
+ </defs>
+</svg>
+
+<section id="home">
+ <div class="hero">
+  <svg class="logo" viewBox="0 0 100 100" aria-hidden="true">
+   <rect x="6" y="6" width="88" height="88" rx="26" fill="#14213d"/>
+   <rect x="22" y="24" width="38" height="52" rx="5" fill="#fff"/>
+   <path d="M30 36h22M30 46h22M30 56h14" stroke="#14213d" stroke-width="4" stroke-linecap="round"/>
+   <circle cx="66" cy="62" r="14" fill="none" stroke="#ffb020" stroke-width="7"/>
+   <path d="M76 72l10 10" stroke="#ffb020" stroke-width="8" stroke-linecap="round"/>
+  </svg>
+  <div><h1>各科文獻週報</h1><p>六個次專科・PubMed 最新文獻・每週更新</p></div>
+ </div>
+ <div class="grid" id="grid"></div>
+ <p class="foot">點選科別進入閱讀，可隨時在上方切換</p>
+ <footer class="credit">
+  <div class="upd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>上次修改：<time id="mod">—</time></div>
+  <div class="who">製作者 <b>JH CHIU MD</b><span class="x">×</span><span class="ai">Claude 5.5</span></div>
+ </footer>
+</section>
+
+<section id="viewer">
+ <div id="bar">
+  <button class="round" id="homeBtn" title="回首頁" aria-label="回首頁"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></button>
   <nav id="tabs" role="tablist"></nav>
-  <a id="ext" href="#" target="_blank" rel="noopener" title="在新分頁開啟">↗</a>
-</header>
-<main id="stage"></main>
+  <a class="round" id="ext" href="#" target="_blank" rel="noopener" title="在新分頁開啟" aria-label="在新分頁開啟"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+ </div>
+ <main id="stage"></main>
+</section>
+
 <script>
 {
+const B="https://cxrfile39-cell.github.io/";
 const SITES=[
-  {id:"peds",  name:"小兒科",url:"https://cxrfile39-cell.github.io/pediatric/"},
-  {id:"obgyn", name:"婦產科",url:"https://cxrfile39-cell.github.io/OBGYN/"},
-  {id:"er",    name:"急診",  url:"https://cxrfile39-cell.github.io/ER_board/"},
-  {id:"rad",   name:"放射",  url:"https://cxrfile39-cell.github.io/radiology-board/"},
-  {id:"hemonc",name:"血腫",  url:"https://cxrfile39-cell.github.io/hemaonco/"},
-  {id:"anes",  name:"麻醉",  url:"https://cxrfile39-cell.github.io/anes_board/"}
+ {id:"peds",  name:"小兒科",en:"Pediatrics",   url:B+"pediatric/",      c1:"#ffbe3d",c2:"#f57c00"},
+ {id:"obgyn", name:"婦產科",en:"OB / GYN",     url:B+"OBGYN/",          c1:"#ff7aa8",c2:"#d6336c"},
+ {id:"er",    name:"急診",  en:"Emergency",    url:B+"ER_board/",       c1:"#ff5a5f",c2:"#b5172b"},
+ {id:"rad",   name:"放射",  en:"Radiology",    url:B+"radiology-board/",c1:"#4f8bff",c2:"#2242c9"},
+ {id:"hemonc",name:"血腫",  en:"Hema-Onco",    url:B+"hemaonco/",       c1:"#b36bff",c2:"#6a1fb8"},
+ {id:"anes",  name:"麻醉",  en:"Anesthesia",   url:B+"anes_board/",     c1:"#2ed3b7",c2:"#0b8073"}
 ];
-const tabs=document.getElementById('tabs'),stage=document.getElementById('stage'),ext=document.getElementById('ext');
+const $=id=>document.getElementById(id);
+const grid=$('grid'),tabs=$('tabs'),stage=$('stage'),ext=$('ext'),bar=$('bar');
+const vars=s=>`--c1:${s.c1};--c2:${s.c2}`;
+const ico=s=>`<svg viewBox="0 0 100 100"><use href="#i-${s.id}"/></svg>`;
+
+grid.innerHTML=SITES.map(s=>`
+ <button class="card" data-id="${s.id}" style="${vars(s)}">
+  <span class="blob b1"></span><span class="blob b2"></span>
+  <svg class="ill" viewBox="0 0 100 100" aria-hidden="true"><use href="#i-${s.id}"/></svg>
+  <b>${s.name}</b><small>${s.en}</small>
+ </button>`).join('');
+tabs.innerHTML=SITES.map(s=>`<button role="tab" data-id="${s.id}" style="${vars(s)}"><i>${ico(s)}</i>${s.name}</button>`).join('');
+
 const frames={};
-tabs.innerHTML=SITES.map(s=>`<button role="tab" data-id="${s.id}">${s.name}</button>`).join('');
-function show(id){
-  const s=SITES.find(x=>x.id===id)||SITES[0];
-  if(!frames[s.id]){                       // 第一次點才載入，之後切換保留狀態
-    const f=document.createElement('iframe');
-    f.src=s.url;f.title=s.name;f.loading="eager";
-    stage.appendChild(f);frames[s.id]=f;
-  }
-  for(const k in frames)frames[k].classList.toggle('on',k===s.id);
-  tabs.querySelectorAll('button').forEach(b=>{
-    const on=b.dataset.id===s.id;b.setAttribute('aria-selected',on);
-    if(on)b.scrollIntoView({inline:'center',block:'nearest'});
-  });
-  ext.href=s.url;document.title=s.name+'｜文獻週報';
-  try{localStorage.setItem('lastTab',s.id)}catch(e){}
-  if(location.hash.slice(1)!==s.id)history.replaceState(null,'','#'+s.id);
+function open(id){
+ const s=SITES.find(x=>x.id===id);
+ if(!s){goHome();return}
+ document.body.classList.add('reading');
+ if(!frames[s.id]){
+  const f=document.createElement('iframe');f.src=s.url;f.title=s.name;
+  stage.appendChild(f);frames[s.id]=f;
+ }
+ for(const k in frames)frames[k].classList.toggle('on',k===s.id);
+ tabs.querySelectorAll('button').forEach(b=>{
+  const on=b.dataset.id===s.id;b.setAttribute('aria-selected',on);
+  if(on)b.scrollIntoView({inline:'center',block:'nearest'});
+ });
+ bar.setAttribute('style',vars(s));
+ document.querySelector('meta[name=theme-color]').content=s.c2;
+ ext.href=s.url;document.title=s.name+'｜文獻週報';
+ if(location.hash.slice(1)!==s.id)history.pushState(null,'','#'+s.id);
 }
-tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.id)});
-window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
-let start=location.hash.slice(1);
-if(!start){try{start=localStorage.getItem('lastTab')}catch(e){}}
-show(start);
+function goHome(){
+ document.body.classList.remove('reading');
+ document.querySelector('meta[name=theme-color]').content='#14213d';
+ document.title='各科文獻週報';
+ if(location.hash)history.pushState(null,'',location.pathname);
+}
+grid.addEventListener('click',e=>{const b=e.target.closest('.card');if(b)open(b.dataset.id)});
+tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b)open(b.dataset.id)});
+$('homeBtn').addEventListener('click',goHome);
+window.addEventListener('popstate',()=>{const h=location.hash.slice(1);h?open(h):goHome()});
+if(location.hash.slice(1))open(location.hash.slice(1));
+
+// 上次修改時間：取自 GitHub Pages 回傳的檔案修改時間，以台北時間顯示
+const d=new Date(document.lastModified);
+if(!isNaN(d)){
+ $('mod').textContent=d.toLocaleString('zh-TW',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
+ $('mod').dateTime=d.toISOString();
+}
 }
 </script>
 </body>
