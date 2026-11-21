@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f3d3e">
+<title>各科文獻週報｜整合入口</title>
+<style>
+:root{color-scheme:light dark;--bg:light-dark(#f5f7f7,#0c1414);--bar:light-dark(#0f3d3e,#0a2a2b);--ink:light-dark(#111,#e8eeee);--chip:rgba(255,255,255,.14);--on:#fff;--onink:#0f3d3e}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.4 -apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+header{background:var(--bar);color:#fff;padding:max(8px,env(safe-area-inset-top)) 10px 8px;display:flex;align-items:center;gap:8px;flex:none}
+nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1;-webkit-overflow-scrolling:touch}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:none;border:0;border-radius:999px;padding:9px 15px;min-height:40px;font:inherit;font-weight:600;background:var(--chip);color:#fff;cursor:pointer;white-space:nowrap}
+nav button[aria-selected=true]{background:var(--on);color:var(--onink)}
+nav button:focus-visible,header a:focus-visible{outline:2px solid #7fe0d0;outline-offset:2px}
+header a{flex:none;color:#fff;text-decoration:none;font-size:20px;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;background:var(--chip)}
+main{flex:1;position:relative}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff;display:none}
+iframe.on{display:block}
+</style>
+</head>
+<body>
+<header>
+  <nav id="tabs" role="tablist"></nav>
+  <a id="ext" href="#" target="_blank" rel="noopener" title="在新分頁開啟">↗</a>
+</header>
+<main id="stage"></main>
+<script>
+{
+const SITES=[
+  {id:"peds",  name:"小兒科",url:"https://cxrfile39-cell.github.io/pediatric/"},
+  {id:"obgyn", name:"婦產科",url:"https://cxrfile39-cell.github.io/OBGYN/"},
+  {id:"er",    name:"急診",  url:"https://cxrfile39-cell.github.io/ER_board/"},
+  {id:"rad",   name:"放射",  url:"https://cxrfile39-cell.github.io/radiology-board/"},
+  {id:"hemonc",name:"血腫",  url:"https://cxrfile39-cell.github.io/hemaonco/"},
+  {id:"anes",  name:"麻醉",  url:"https://cxrfile39-cell.github.io/anes_board/"}
+];
+const tabs=document.getElementById('tabs'),stage=document.getElementById('stage'),ext=document.getElementById('ext');
+const frames={};
+tabs.innerHTML=SITES.map(s=>`<button role="tab" data-id="${s.id}">${s.name}</button>`).join('');
+function show(id){
+  const s=SITES.find(x=>x.id===id)||SITES[0];
+  if(!frames[s.id]){                       // 第一次點才載入，之後切換保留狀態
+    const f=document.createElement('iframe');
+    f.src=s.url;f.title=s.name;f.loading="eager";
+    stage.appendChild(f);frames[s.id]=f;
+  }
+  for(const k in frames)frames[k].classList.toggle('on',k===s.id);
+  tabs.querySelectorAll('button').forEach(b=>{
+    const on=b.dataset.id===s.id;b.setAttribute('aria-selected',on);
+    if(on)b.scrollIntoView({inline:'center',block:'nearest'});
+  });
+  ext.href=s.url;document.title=s.name+'｜文獻週報';
+  try{localStorage.setItem('lastTab',s.id)}catch(e){}
+  if(location.hash.slice(1)!==s.id)history.replaceState(null,'','#'+s.id);
+}
+tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.id)});
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+let start=location.hash.slice(1);
+if(!start){try{start=localStorage.getItem('lastTab')}catch(e){}}
+show(start);
+}
+</script>
+</body>
+</html>
