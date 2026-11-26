@@ -152,8 +152,8 @@ iframe.on{display:block}
  <p class="foot">點選科別進入閱讀，可隨時在上方切換</p>
  <footer class="credit">
   <div class="stats" aria-live="polite">
-   <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="#f57c00" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span><small>瀏覽人次</small><b id="busuanzi_value_page_pv">—</b></span></div>
-   <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="#6a1fb8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.3c2.6.2 4.4 2 4.9 4.7"/></svg><span><small>訪客人數</small><b id="busuanzi_value_site_uv">—</b></span></div>
+   <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="#f57c00" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span><small>本頁瀏覽人次</small><b id="gcPage">—</b></span></div>
+   <div class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="#6a1fb8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.3c2.6.2 4.4 2 4.9 4.7"/></svg><span><small>全站瀏覽人次</small><b id="gcTotal">—</b></span></div>
   </div>
   <div class="upd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>上次修改：<time id="mod">—</time></div>
   <div class="who">製作者 <b>JH CHIU MD</b><span class="x">×</span><span class="ai">Claude 5.5</span></div>
@@ -232,8 +232,18 @@ if(!isNaN(d)){
 }
 }
 </script>
-<!-- 瀏覽人次：不蒜子 busuanzi（免註冊）。載入失敗時數字保持「—」，不影響頁面 -->
-<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- 瀏覽人次：GoatCounter（後台 https://cxrfile2.goatcounter.com）。
+     頁面顯示數字需在後台 Settings 勾選「Allow adding visitor counts on your website」；未勾選時顯示「—」 -->
+<script data-goatcounter="https://cxrfile2.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<script>
+{
+const GC="https://cxrfile2.goatcounter.com/counter/";
+const show=(id,path)=>fetch(GC+encodeURIComponent(path)+".json").then(r=>r.ok?r.json():null)
+  .then(j=>{if(j&&j.count!=null)document.getElementById(id).textContent=j.count}).catch(()=>{});
+show("gcPage",location.pathname);
+show("gcTotal","TOTAL");
+}
+</script>
 </body>
 </html>
 
